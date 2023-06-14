@@ -24,6 +24,7 @@ q8 = sql_q8()
 q9 = sql_q9()
 q10 = sql_q10()
 #
+st.sidebar.title("You Tube Data Harvest")
 options = {
     "sql1" : "1.what are the names of all the videos and their corresponding channels?",
     "sql2" : "2.which channels have the most number of videos, and how many videos do they have?",
@@ -37,7 +38,6 @@ options = {
     "sql10" : "10.which videos have the highest number of comments, and what are their corresponding channelnames?"
     } 
 #
-
 #
 def sql_query():
     selected_option = st.sidebar.selectbox("SQL Questions:", list(options.values())) # Dropdown component
@@ -429,7 +429,7 @@ def ch_db_ql():
         dataf3
 
         #
-        # st.line_chart(dataf0)  # Display the area chart
+        st.line_chart(dataf0)  # Display the area chart
         # st.line_chart(dataf1)
         #
         mysql_conn.close()
@@ -437,10 +437,31 @@ def ch_db_ql():
 
     # # # --------- # # #
 
+def mongo_info():
+    client = MongoClient("mongodb://localhost:27017")
+    db = client["youtubeid"]  # Replace with your MongoDB database name
+    collection_names = db.list_collection_names()
+
+    # Dropdown for selecting collection
+    selected_collection = st.sidebar.selectbox("Mongo DB Collections:", collection_names)
+
+    # Retrieve data from selected collection
+    if selected_collection:
+        collection = db[selected_collection]
+        data = list(collection.find())
+
+        # Display data
+        st.write("Channel Data:")
+        for document in data:
+            st.write(document)
+
+#
 # Main Function:
 def main(): 
     ch_db_ql()
+    mongo_info()
     sql_query()
+
 
 #
 if __name__ == "__main__":
